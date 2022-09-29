@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Topic {
   int? id;
   final String title;
@@ -14,7 +16,7 @@ class Topic {
   }
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'subtitle': subTitle,
-      };
+    'title': title,
+    'subtitle': subTitle,
+  };
 }

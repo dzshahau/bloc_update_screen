@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddTopicPage extends StatelessWidget {
-  const AddTopicPage({super.key});
+  AddTopicPage({super.key});
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _subtitleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +26,57 @@ class AddTopicPage extends StatelessWidget {
             listener: (context, state) {
               if (state is NewTopicAdded) {
                 Navigator.of(context).pop();
+                return;
+              }
+              if (state is AddTopicError) {
+                ScaffoldMessenger.of(context).showMaterialBanner(
+                  MaterialBanner(
+                    content: Text(state.error),
+                    actions: [
+                      IconButton(onPressed: (){
+                        ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                      }, icon: const Icon(Icons.close),)
+                    ],
+                  ),
+                );
               }
             },
-            child: Column(
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    context
-                        .read<AddTopicBloc>()
-                        .add(AddNewTopic('new title', 'new subtitle'));
-                  },
-                  child: const Text('Add new topic'),
-                )
-              ],
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text('Title'),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                    controller: _subtitleController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text('Subtitle'),
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () {
+                      context.read<AddTopicBloc>().add(
+                            AddNewTopic(_titleController.text,
+                                _subtitleController.text),
+                          );
+                    },
+                    child: const Text('Add new topic'),
+                  )
+                ],
+              ),
             ),
           );
         },

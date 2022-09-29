@@ -1,3 +1,4 @@
+import 'package:bloc_listener/data/database_helper.dart';
 import 'package:bloc_listener/data/topic.dart';
 
 class TopicRepository {
@@ -7,10 +8,18 @@ class TopicRepository {
 
   static TopicRepository get instance => _instance;
 
-  //final List<Topic> _list = List.empty(growable: true);
-  final List<Topic> _list = [Topic("title", "subTitle"), Topic("title1", "subTitle1")];
+  Future<List<Topic>> get getTopics async {
+    final db = DatabaseHelper.instance;
+    final result = await db.getTopics();
+    return result.map((e) => Topic.fromJson(e)).toList();
+  }
 
-  List<Topic> get getTopics => _list;
+  Future<int> addTopic(Topic topic) async {
+    final db = DatabaseHelper.instance;
+    return db.addTopic(topic);
+  }
 
-  void addTopic(Topic topic) => _list.add(topic);
+  Future<int> deleteTopic(Topic topic) async {
+    return DatabaseHelper.instance.deleteTopic(topic.id!);
+  }
 }

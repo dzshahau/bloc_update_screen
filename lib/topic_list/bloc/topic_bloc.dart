@@ -11,16 +11,23 @@ class TopicBloc extends Bloc<TopicEvent, TopicState> {
     on<UpdateList>((event, state) async {
       _updateList();
     });
+    on<DeleteTopic>(_deleteTopic);
   }
 
   Future<void> _initState() async {
-    await Future.delayed(const Duration(seconds: 10));
+    //await Future.delayed(const Duration(seconds: 10));
     _updateList();
   }
 
-  void _updateList(){
+  void _updateList() async {
     emit(
-      ListLoaded(_repository.getTopics),
+      ListLoaded(await _repository.getTopics),
     );
+  }
+
+  void _deleteTopic(DeleteTopic event, Emitter<TopicState> state) async {
+    if (await _repository.deleteTopic(event.topic) != 0) {
+      _updateList();
+    }
   }
 }
